@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from pymongo.errors import ServerSelectionTimeoutError
 
 def setup_mongodb():
     try:
@@ -10,6 +11,9 @@ def setup_mongodb():
 
     except ConnectionError:
         print("Connection Error")
+
+    except ServerSelectionTimeoutError:
+        print("Server Selection Timeout Error")
 
 def create_database(client):
     try:
@@ -45,6 +49,22 @@ def add_document(collection, document_data):
     except Exception as e:
         print(e)
 
+def list_collections(database):
+    collections = database.list_collection_names()
+    if not collections:
+        print("No Collections Found")
+        return None
+
+    return collections
+
+def find_document(collection, data):
+    result = collection.find_one(data)
+    if not result:
+        print("Document Not Found")
+        return None
+
+    return result
+
 mongo = setup_mongodb()
 db = create_database(mongo)
 table = create_collection(db)
@@ -64,3 +84,13 @@ data2 = {
 # document1 = add_document(table, data1)
 # document2 = add_document(table, data2)
 # print(document2)
+
+# list_of_collections = list_collections(db)
+# print(list_of_collections)
+
+data3 = {
+    "name" : "Samarth Prajapati",
+}
+
+find_data = find_document(table, data3)
+print(find_data)
