@@ -73,6 +73,7 @@ def all_documents(collection):
 
     for person in result:
         print(f"Name : {person["name"]}, Role : {person["role"]}, Skills : {person["skills"]}")
+
     return "Fetched Successfully"
 
 def delete_document(collection, data):
