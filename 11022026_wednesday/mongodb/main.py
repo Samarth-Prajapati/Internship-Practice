@@ -179,4 +179,4 @@ update_data = {
     "role" : "BA"
 }
 
-update = update_document(table, identifier_data, update_data)
+# update = update_document(table, identifier_data, update_data)
