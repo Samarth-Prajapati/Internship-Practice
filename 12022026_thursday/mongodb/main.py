@@ -137,12 +137,12 @@ def update_student(_id: int, request: Student):
         {"_id": _id},
         {"$set":
              {
-                 "name": request.name if request.name != "string" else db.find_one({"_id": _id})["name"],
-                 "age": request.age if request.age != 1 else db.find_one({"_id": _id})["age"],
+                 "name": request.name if request.name != "string" else student["name"],
+                 "age": request.age if request.age != 1 else student["age"],
              },
             "$push":
             {
-                "marks": request.marks if len(request.marks) > 1 or request.marks[0] != 0 else db.find_one({"_id": _id})["marks"],
+                "marks": request.marks if len(request.marks) > 1 or request.marks[0] != 0 else student["marks"],
             }
          },
     )
