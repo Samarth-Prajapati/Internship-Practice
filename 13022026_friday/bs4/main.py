@@ -34,6 +34,5 @@ soup = load_bs4("https://beautiful-soup-4.readthedocs.io/en/latest/")
 # print(soup.prettify())
 
 h1_tag = load_all_data(soup, "h1")
-
-for i in h1_tag:
-    print(i.text)
+# for i in h1_tag:
+#     print(i.text)
