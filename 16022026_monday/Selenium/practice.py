@@ -13,47 +13,47 @@ def create_driver():
 
     options = Options()
     options.add_argument("--start-maximized")
-    driver = webdriver.Chrome(options = options)
-    return driver
+    chrome_driver = webdriver.Chrome(options = options)
+    return chrome_driver
 
-def open_page(driver):
+def open_page(chrome_driver):
     """
     open url using chrome driver
     Parameters
     ----------
-    driver - chrome driver
+    chrome_driver - chrome driver
 
     Returns - None
     -------
     """
 
-    driver.get(url)
+    chrome_driver.get(url)
 
-def extract_table(driver):
+def extract_table(chrome_driver):
     """
     Extract table data
     Parameters
     ----------
-    driver - chrome driver
+    chrome_driver - chrome driver
 
     Returns - extracted data
     -------
     """
 
-    rows = driver.find_elements(By.CSS_SELECTOR, "table.table tbody tr")
-    data = []
-    for row in rows:
+    rows = chrome_driver.find_elements(By.CSS_SELECTOR, "table.table tbody tr")
+    table_data = []
+    for row in rows[1:]:
         cols = row.find_elements(By.CSS_SELECTOR, "td")
-        cols_text= [col.text.strip() for col in cols]
-        data.append(cols_text)
-    return data
+        cols_text = [col.text.strip() for col in cols]
+        table_data.append(cols_text)
+    return table_data
 
-def paginate(driver, page = 5):
+def paginate(chrome_driver, page = 5):
     """
     Paginate through all pages
     Parameters
     ----------
-    driver - chrome driver
+    chrome_driver - chrome driver
     page - number of pages
 
     Returns - list of all pages data
@@ -63,7 +63,7 @@ def paginate(driver, page = 5):
     base_url = "https://www.scrapethissite.com/pages/forms/"
     all_data = []
     for page in range(1, page + 1):
-        driver.get(f"{base_url}?page_num{page}")
+        chrome_driver.get(f"{base_url}?page_num{page}")
         table_data = extract_table(driver)
         all_data.extend(table_data)
     return all_data
