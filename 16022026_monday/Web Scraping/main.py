@@ -13,6 +13,23 @@ content = web.content
 url = web.url
 # print(url)
 
+# Beautiful Soup
+
 soup = BeautifulSoup(content, "html.parser")
 # print(soup)
 
+prettify_soup = soup.prettify()
+# print(prettify_soup)
+
+# Tags
+
+title = soup.title
+# print(title)
+
+tag = title.name
+# print(tag)
+
+# Navigable String
+
+navigable_string = soup.p.string
+print(navigable_string)
