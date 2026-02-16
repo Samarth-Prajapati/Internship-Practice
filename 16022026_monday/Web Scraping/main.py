@@ -32,4 +32,19 @@ tag = title.name
 # Navigable String
 
 navigable_string = soup.p.string
-print(navigable_string)
+# print(navigable_string)
+
+# Functions of Beautiful Soup
+
+# print(soup.find("p"))
+
+all_p_tags = soup.find_all("p")
+# print(all_p_tags)
+
+# for tags in all_p_tags:
+#     print(tags.text)
+
+# Comments
+
+comment = soup.p.prettify()
+print(comment)
