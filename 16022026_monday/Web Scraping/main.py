@@ -47,4 +47,12 @@ all_p_tags = soup.find_all("p")
 # Comments
 
 comment = soup.p.prettify()
-print(comment)
+# print(comment)
+
+# Finding elements by id and class
+
+class_data = soup.find("div", class_ = "content")
+# print(class_data)
+
+p_data = class_data.find_all("p")
+# print(p_data)
