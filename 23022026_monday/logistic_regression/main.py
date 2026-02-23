@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 
 def load_dataset(path):
     """
@@ -134,6 +134,7 @@ def training_model(xtrain, ytrain):
     """
 
     lr = LogisticRegression(class_weight = "balanced", random_state = 42)
+
     lr.fit(xtrain, ytrain)
     print("Logistic Regression Model Training Successful.")
 
@@ -159,6 +160,9 @@ def check_model(lr_model, xtest, ytest):
 
     cm = confusion_matrix(ytest, ypred)
     print(f"Confusion Matrix = \n{cm}")
+
+    cr = classification_report(ytest, ypred)
+    print(f"\nClassification Report = \n{cr}")
 
     return ypred
 
@@ -186,5 +190,3 @@ if __name__ == "__main__":
 
     print("\n================================================ Checking Model ===============================================\n")
     y_predict = check_model(model, X_test, y_test)
-
-
