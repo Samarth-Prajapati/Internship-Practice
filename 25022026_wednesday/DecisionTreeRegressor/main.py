@@ -1,6 +1,7 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
 
 class RegressorModel:
 
@@ -48,6 +49,12 @@ class RegressorModel:
         print("\n[INFO] Duplicates Dropped Successfully.")
 
     def eda(self):
+        """
+        Performing EDA
+        Returns - None
+        -------
+        """
+
         corr = self.df.corr(numeric_only = True)
         sns.heatmap(corr, annot = True)
         plt.show()
@@ -67,6 +74,30 @@ class RegressorModel:
 
         print("[INFO] EDA Performed Successfully.")
 
+    def handle_outliers(self):
+        print("Outliers Info = \n")
+
+        cols = ["bmi", "charges"]
+        for col in cols:
+            q1 = self.df[col].quantile(0.25)
+            q3 = self.df[col].quantile(0.75)
+            iqr = q3 - q1
+            lower = q1 - 1.5 * iqr
+            upper = q3 + 1.5 * iqr
+            outliers = self.df[(self.df[col] < lower) | (self.df[col] > upper)]
+            print(f"Feature ( {col} ) = {len(outliers)} outliers found.")
+
+        self.df["bmi"] = np.log(self.df["bmi"])
+        self.df["charges"] = np.log(self.df["charges"])
+
+        for i in range(len(cols)):
+            plt.subplot(1, 2, i + 1)
+            sns.boxplot(y = self.df[cols[i]])
+            plt.title(cols[i])
+        plt.show()
+
+        print("\n[INFO] Outliers Handled Successfully.")
+
 def main():
     print("=========================================== DECISION TREE REGRESSOR ===========================================")
     regressor = RegressorModel()
@@ -82,6 +113,9 @@ def main():
 
     print("\n===================================================== EDA =====================================================\n")
     regressor.eda()
+
+    print("\n=============================================== HANDLE OUTLIERS ===============================================\n")
+    regressor.handle_outliers()
 
 if __name__ == "__main__":
     main()
