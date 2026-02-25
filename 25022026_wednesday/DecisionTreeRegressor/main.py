@@ -7,6 +7,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.pipeline import Pipeline
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, root_mean_squared_error
 
 class RegressorModel:
 
@@ -24,8 +25,9 @@ class RegressorModel:
         self.y_test = None
         self.test_size = 0.3
         self.random_state = 42
-        self.model = DecisionTreeRegressor(random_state = self.random_state)
+        self.model = DecisionTreeRegressor(max_depth=5, min_samples_split=10, ccp_alpha = 0.01, random_state = self.random_state)
         self.pipeline = None
+        self.y_pred = None
 
     def load_dataset(self):
         """
@@ -37,7 +39,7 @@ class RegressorModel:
         self.df = pd.read_csv(self.path)
         print(f"DataFrame = \n\n{self.df.head()}")
 
-        print("\n[INFO] Dataset Loaded Successfully.")
+        print("\n-----> Dataset Loaded Successfully.")
 
     def check_dataset(self):
         """
@@ -53,7 +55,7 @@ class RegressorModel:
 
         print(f"Number of Duplicates in DataFrame = {self.df.duplicated().sum()}")
 
-        print("\n[INFO] Dataset Checked Successfully.")
+        print("\n-----> Dataset Checked Successfully.")
 
     def drop_duplicates(self):
         """
@@ -65,7 +67,7 @@ class RegressorModel:
         self.df.drop_duplicates(inplace = True)
         print(f"Number of Duplicates in DataFrame after Dropping Duplicates = {self.df.duplicated().sum()}")
 
-        print("\n[INFO] Duplicates Dropped Successfully.")
+        print("\n-----> Duplicates Dropped Successfully.")
 
     def eda(self):
         """
@@ -91,7 +93,7 @@ class RegressorModel:
             plt.title(cols[i])
         plt.show()
 
-        print("[INFO] EDA Performed Successfully.")
+        print("-----> EDA Performed Successfully.")
 
     def handle_outliers(self):
         print("Outliers Info = \n")
@@ -115,7 +117,7 @@ class RegressorModel:
             plt.title(cols[i])
         plt.show()
 
-        print("\n[INFO] Outliers Handled Successfully.")
+        print("\n-----> Outliers Handled Successfully.")
 
     def encoding(self):
         """
@@ -124,14 +126,10 @@ class RegressorModel:
         -------
         """
 
-        le_cols = ["sex", "smoker"]
-        for col in le_cols:
-            self.df[col] = self.le.fit_transform(self.df[col])
-
-        ohe_cols = ["region"]
+        ohe_cols = ["sex", "smoker", "region"]
         self.preprocessor = ColumnTransformer(transformers = [("OHE", self.ohe, ohe_cols)], remainder = "passthrough")
 
-        print("[INFO] Encoded Successfully.")
+        print("-----> Encoded Successfully.")
 
     def split_data(self):
         """
@@ -145,7 +143,7 @@ class RegressorModel:
 
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size = self.test_size, random_state = self.random_state)
 
-        print("[INFO] Split Data Successfully.")
+        print("-----> Split Data Successfully.")
 
     def train_model(self):
         """
@@ -157,7 +155,17 @@ class RegressorModel:
         self.pipeline = Pipeline(steps = [("preprocessor", self.preprocessor), ("regressor", self.model)])
         self.pipeline.fit(self.X_train, self.y_train)
 
-        print("[INFO] Trained Model Successfully.")
+        print("-----> Trained Model Successfully.")
+
+    def check_model(self):
+        self.y_pred = self.pipeline.predict(self.X_test)
+
+        print(f"MAE = {mean_absolute_error(self.y_test, self.y_pred)}")
+        print(f"MSE = {mean_squared_error(self.y_test, self.y_pred)}")
+        print(f"R-MSE = {root_mean_squared_error(self.y_test, self.y_pred)}")
+        print(f"R2-SCORE = {r2_score(self.y_test, self.y_pred)}")
+
+        print("\n-----> Model Checked Successfully.")
 
 def main():
     print("=========================================== DECISION TREE REGRESSOR ===========================================")
@@ -186,6 +194,11 @@ def main():
 
     print("\n================================================ TRAINING MODEL ===============================================\n")
     regressor.train_model()
+
+    print("\n================================================== CHECK MODEL ================================================\n")
+    regressor.check_model()
+
+    print("\n===============================================================================================================")
 
 if __name__ == "__main__":
     main()
