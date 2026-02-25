@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import train_test_split
 
 class RegressorModel:
 
@@ -15,6 +16,12 @@ class RegressorModel:
         self.ohe = OneHotEncoder(drop = "first")
         self.X = None
         self.y = None
+        self.X_train = None
+        self.X_test = None
+        self.y_train = None
+        self.y_test = None
+        self.test_size = 0.3
+        self.random_state = 42
 
     def load_dataset(self):
         """
@@ -118,6 +125,22 @@ class RegressorModel:
 
         self.preprocessor = ColumnTransformer(transformers = [("category1", self.le, le_cols), ("category2", self.ohe, ohe_cols)])
 
+        print("[INFO] Encoded Successfully.")
+
+    def split_data(self):
+        """
+        Splitting the data.
+        Returns - None
+        -------
+        """
+
+        self.X = self.df.iloc[:, :-1]
+        self.y = self.df.iloc[:, -1]
+
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size = self.test_size, random_state = self.random_state)
+
+        print("[INFO] Split Data Successfully.")
+
 def main():
     print("=========================================== DECISION TREE REGRESSOR ===========================================")
     regressor = RegressorModel("insurance.csv")
@@ -139,6 +162,9 @@ def main():
 
     print("\n============================================== ENCODING FEATURES ==============================================\n")
     regressor.encoding()
+
+    print("\n================================================ SPLITTING DATA ===============================================\n")
+    regressor.split_data()
 
 if __name__ == "__main__":
     main()
