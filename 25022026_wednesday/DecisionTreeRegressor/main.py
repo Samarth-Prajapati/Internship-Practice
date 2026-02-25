@@ -2,11 +2,19 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.compose import ColumnTransformer
 
 class RegressorModel:
 
-    def __init__(self):
+    def __init__(self, path):
         self.df = None
+        self.path = path
+        self.preprocessor = None
+        self.le = LabelEncoder()
+        self.ohe = OneHotEncoder(drop = "first")
+        self.X = None
+        self.y = None
 
     def load_dataset(self):
         """
@@ -15,7 +23,7 @@ class RegressorModel:
         -------
         """
 
-        self.df = pd.read_csv("insurance.csv")
+        self.df = pd.read_csv(self.path)
         print(f"DataFrame = \n\n{self.df.head()}")
 
         print("\n[INFO] Dataset Loaded Successfully.")
@@ -98,9 +106,21 @@ class RegressorModel:
 
         print("\n[INFO] Outliers Handled Successfully.")
 
+    def encoding(self):
+        """
+        Encoding the data.
+        Returns - None
+        -------
+        """
+
+        le_cols = ["sex", "smoker"]
+        ohe_cols = ["region"]
+
+        self.preprocessor = ColumnTransformer(transformers = [("category1", self.le, le_cols), ("category2", self.ohe, ohe_cols)])
+
 def main():
     print("=========================================== DECISION TREE REGRESSOR ===========================================")
-    regressor = RegressorModel()
+    regressor = RegressorModel("insurance.csv")
 
     print("\n================================================= LOAD DATASET ================================================\n")
     regressor.load_dataset()
@@ -116,6 +136,9 @@ def main():
 
     print("\n=============================================== HANDLE OUTLIERS ===============================================\n")
     regressor.handle_outliers()
+
+    print("\n============================================== ENCODING FEATURES ==============================================\n")
+    regressor.encoding()
 
 if __name__ == "__main__":
     main()
