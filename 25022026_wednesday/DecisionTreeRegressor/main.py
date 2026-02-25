@@ -5,6 +5,8 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.pipeline import Pipeline
 
 class RegressorModel:
 
@@ -22,6 +24,8 @@ class RegressorModel:
         self.y_test = None
         self.test_size = 0.3
         self.random_state = 42
+        self.model = DecisionTreeRegressor(random_state = self.random_state)
+        self.pipeline = None
 
     def load_dataset(self):
         """
@@ -121,9 +125,11 @@ class RegressorModel:
         """
 
         le_cols = ["sex", "smoker"]
-        ohe_cols = ["region"]
+        for col in le_cols:
+            self.df[col] = self.le.fit_transform(self.df[col])
 
-        self.preprocessor = ColumnTransformer(transformers = [("category1", self.le, le_cols), ("category2", self.ohe, ohe_cols)])
+        ohe_cols = ["region"]
+        self.preprocessor = ColumnTransformer(transformers = [("OHE", self.ohe, ohe_cols)], remainder = "passthrough")
 
         print("[INFO] Encoded Successfully.")
 
@@ -140,6 +146,18 @@ class RegressorModel:
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size = self.test_size, random_state = self.random_state)
 
         print("[INFO] Split Data Successfully.")
+
+    def train_model(self):
+        """
+        Training the model.
+        Returns
+        -------
+        """
+
+        self.pipeline = Pipeline(steps = [("preprocessor", self.preprocessor), ("regressor", self.model)])
+        self.pipeline.fit(self.X_train, self.y_train)
+
+        print("[INFO] Trained Model Successfully.")
 
 def main():
     print("=========================================== DECISION TREE REGRESSOR ===========================================")
@@ -165,6 +183,9 @@ def main():
 
     print("\n================================================ SPLITTING DATA ===============================================\n")
     regressor.split_data()
+
+    print("\n================================================ TRAINING MODEL ===============================================\n")
+    regressor.train_model()
 
 if __name__ == "__main__":
     main()
