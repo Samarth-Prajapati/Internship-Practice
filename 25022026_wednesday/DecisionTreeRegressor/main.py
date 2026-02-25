@@ -1,6 +1,6 @@
 import pandas as pd
 
-class DecisionTreeRegressor:
+class RegressorModel:
 
     def __init__(self):
         self.df = None
@@ -50,7 +50,7 @@ class DecisionTreeRegressor:
 
 def main():
     print("=========================================== DECISION TREE REGRESSOR ===========================================")
-    regressor = DecisionTreeRegressor()
+    regressor = RegressorModel()
 
     print("\n================================================= LOAD DATASET ================================================\n")
     regressor.load_dataset()
