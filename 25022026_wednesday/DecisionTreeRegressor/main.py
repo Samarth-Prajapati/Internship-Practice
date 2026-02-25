@@ -1,4 +1,6 @@
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 class RegressorModel:
 
@@ -24,7 +26,7 @@ class RegressorModel:
         -------
         """
 
-        print("DataFrame Info = \n\n")
+        print("DataFrame Info = \n")
         self.df.info()
 
         print(f"\nDataFrame Description = \n\n{self.df.describe()}\n")
@@ -46,7 +48,24 @@ class RegressorModel:
         print("\n[INFO] Duplicates Dropped Successfully.")
 
     def eda(self):
-        pass
+        corr = self.df.corr(numeric_only = True)
+        sns.heatmap(corr, annot = True)
+        plt.show()
+
+        cols = ["bmi", "charges"]
+        for i in range(len(cols)):
+            plt.subplot(1, 2, i + 1)
+            sns.boxplot(y = self.df[cols[i]])
+            plt.title(cols[i])
+        plt.show()
+
+        for i in range(len(cols)):
+            plt.subplot(1, 2, i + 1)
+            sns.histplot(self.df[cols[i]], kde = True)
+            plt.title(cols[i])
+        plt.show()
+
+        print("[INFO] EDA Performed Successfully.")
 
 def main():
     print("=========================================== DECISION TREE REGRESSOR ===========================================")
@@ -62,6 +81,7 @@ def main():
     regressor.drop_duplicates()
 
     print("\n===================================================== EDA =====================================================\n")
+    regressor.eda()
 
 if __name__ == "__main__":
     main()
