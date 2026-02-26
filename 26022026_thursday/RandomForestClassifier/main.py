@@ -20,7 +20,12 @@ class Classification:
         self.y_test = None
         self.random_state = 42
         self.test_size = 0.3
-        self.model = RandomForestClassifier(random_state = self.random_state)
+        self.model = RandomForestClassifier(
+            max_depth = 2,
+            min_samples_split = 5,
+            min_samples_leaf = 2,
+            ccp_alpha = 0.01,
+            random_state = self.random_state)
         self.y_pred = None
 
     def load_data(self):
