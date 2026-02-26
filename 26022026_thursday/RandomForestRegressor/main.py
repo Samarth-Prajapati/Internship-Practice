@@ -29,9 +29,11 @@ class Regressor:
         """
 
         try:
-            self.df = pd.read_csv(self.path)
+            self.logger.info("Start Loading Dataset")
 
+            self.df = pd.read_csv(self.path)
             print(f"\nDataset = \n\n{self.df.head()}\n")
+
             print("------> Dataset Loaded Successfully", end = seperator)
             self.logger.info("Dataset Loaded Successfully")
 
@@ -50,17 +52,33 @@ class Regressor:
         -------
         """
 
+        self.logger.info("Start Analyzing Dataset")
+
         print("Dataset Info = \n")
         self.df.info()
 
         print(f"\nDataset Description = \n\n{self.df.describe()}\n")
-
         print(f"Shape of Dataset = {self.df.shape}\n")
-
         print(f"Sum of Duplicates = {self.df.duplicated().sum()}\n")
 
         print("------> Dataset Analysis Successfully", end=seperator)
         self.logger.info("Dataset Analysis Successfully")
+
+    def preprocess(self):
+        """
+        PREPROCESSING DATASET
+        Returns - None
+        -------
+        """
+
+        self.logger.info("Start Preprocessing Dataset")
+        
+        self.df.drop(self.df.columns[0], axis = 1, inplace = True)
+        print("Removed Unwanted Columns\n")
+        print(f"Dataset = \n\n{self.df.head()}\n")
+
+        print("------> Dataset Preprocessed Successfully", end=seperator)
+        self.logger.info("Dataset Preprocessed Successfully")
 
 def main():
     """
@@ -75,6 +93,8 @@ def main():
     regressor.load_dataset()
 
     regressor.check_dataset()
+
+    regressor.preprocess()
 
 if __name__ == "__main__":
     main()
