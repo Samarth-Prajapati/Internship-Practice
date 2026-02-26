@@ -1,16 +1,25 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
 
 class Classification:
 
     def __init__(self, path):
         self.df = None
         self.path = path
-        self.preprocessor = None
         self.le = LabelEncoder()
+        self.X = None
+        self.y = None
+        self.X_train = None
+        self.X_test = None
+        self.y_train = None
+        self.y_test = None
+        self.random_state = 42
+        self.test_size = 0.3
+        self.model = RandomForestClassifier(random_state = self.random_state)
 
     def load_data(self):
         """
@@ -74,10 +83,38 @@ class Classification:
         -------
         """
 
-        le_cols = ["label"]
-        self.preprocessor = ColumnTransformer(transformers = [("LE", self.le, le_cols)], remainder = "passthrough")
+        self.df["label"] = self.le.fit_transform(self.df["label"])
 
         print("-----> Encoded Successfully.")
+
+    def split_data(self):
+        """
+        Splitting the data.
+        Returns - None
+        -------
+        """
+
+        self.X = self.df.iloc[:, :-1]
+        self.y = self.df.iloc[:, -1]
+
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+            self.X, self.y,
+            test_size = self.test_size,
+            random_state = self.random_state
+        )
+
+        print("-----> Split Data Successfully.")
+
+    def train_model(self):
+        """
+        Training the model.
+        Returns
+        -------
+        """
+
+        self.model.fit(self.X_train, self.y_train)
+
+        print("-----> Trained Model Successfully.")
 
 def main():
     print("========================================== RANDOM FOREST CLASSIFIER ===========================================")
@@ -92,8 +129,14 @@ def main():
     print("\n===================================================== EDA =====================================================\n")
     random_forest.eda()
 
-    print("\n============================================== ENCODING FEATURES ==============================================\n")
+    print("\n=========================================== ENCODING TARGET FEATURE ===========================================\n")
     random_forest.encoding()
+
+    print("\n================================================ SPLITTING DATA ===============================================\n")
+    random_forest.split_data()
+
+    print("\n================================================ TRAINING MODEL ===============================================\n")
+    random_forest.train_model()
 
 if __name__ == "__main__":
     main()
