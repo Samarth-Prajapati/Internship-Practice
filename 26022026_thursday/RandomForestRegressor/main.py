@@ -84,6 +84,7 @@ class Regressor:
         print(f"\nDataset Description = \n\n{self.df.describe()}\n")
         print(f"Shape of Dataset = {self.df.shape}\n")
         print(f"Sum of Duplicates = {self.df.duplicated().sum()}\n")
+        print(f"Null Values in Dataset = \n\n{self.df.isnull().sum()}\n")
 
         print("------> Dataset Analysis Successfully", end = seperator)
         self.logger.info("Dataset Analysis Successfully")
@@ -98,6 +99,7 @@ class Regressor:
         self.logger.info("Start Preprocessing Dataset")
 
         self.df.drop(self.df.columns[0], axis = 1, inplace = True)
+        self.df.drop("flight", axis = 1, inplace = True)
         print("Removed Unwanted Columns\n")
         print(f"Dataset = \n\n{self.df.head()}\n")
 
@@ -253,7 +255,7 @@ def main():
     regressor.load_dataset()
     regressor.check_dataset()
     regressor.preprocess()
-    # regressor.eda()
+    regressor.eda()
     regressor.handle_outliers()
     regressor.encoding()
     regressor.split_data()
