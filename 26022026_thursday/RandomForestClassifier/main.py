@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 class Classification:
 
@@ -20,6 +21,7 @@ class Classification:
         self.random_state = 42
         self.test_size = 0.3
         self.model = RandomForestClassifier(random_state = self.random_state)
+        self.y_pred = None
 
     def load_data(self):
         """
@@ -116,6 +118,21 @@ class Classification:
 
         print("-----> Trained Model Successfully.")
 
+    def check_model(self):
+        """
+        Checking model.
+        Returns
+        -------
+        """
+
+        self.y_pred = self.model.predict(self.X_test)
+
+        print(f"ACCURACY SCORE = {accuracy_score(self.y_test, self.y_pred) * 100 : .2f} %\n")
+        print(f"CLASSIFICATION REPORT = \n\n{classification_report(self.y_test, self.y_pred)}\n")
+        print(f"CONFUSION MATRIX = \n\n{confusion_matrix(self.y_test, self.y_pred)}")
+
+        print("\n-----> Model Checked Successfully.")
+
 def main():
     print("========================================== RANDOM FOREST CLASSIFIER ===========================================")
     random_forest = Classification("CropRecommendation.csv")
@@ -137,6 +154,11 @@ def main():
 
     print("\n================================================ TRAINING MODEL ===============================================\n")
     random_forest.train_model()
+
+    print("\n================================================== CHECK MODEL ================================================\n")
+    random_forest.check_model()
+
+    print("\n===============================================================================================================")
 
 if __name__ == "__main__":
     main()
