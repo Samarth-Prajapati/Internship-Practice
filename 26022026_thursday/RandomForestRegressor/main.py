@@ -5,6 +5,9 @@ import seaborn as sns
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, root_mean_squared_error
 
 seperator = f"\n\n{'--' * 75}\n\n"
 
@@ -38,6 +41,9 @@ class Regressor:
         self.y_test = None
         self.random_state = 42
         self.test_size = 0.3
+        self.pipeline = None
+        self.model = RandomForestRegressor(random_state = self.random_state)
+        self.y_pred = None
 
     def load_dataset(self):
         """
@@ -177,7 +183,7 @@ class Regressor:
     def split_data(self):
         """
         SPLIT DATA
-        Returns
+        Returns - None
         -------
         """
 
@@ -194,6 +200,45 @@ class Regressor:
 
         print("------> Data Splitting Successful", end = seperator)
         self.logger.info("Data Splitting Successful")
+
+    def train_model(self):
+        """
+        TRAIN MODEL
+        Returns - None
+        -------
+        """
+
+        self.logger.info("Start Training Model")
+
+        self.pipeline = Pipeline(
+            steps = [
+                ("preprocessor", self.preprocessing),
+                ("model", self.model)
+            ]
+        )
+        self.pipeline.fit(self.X_train, self.y_train)
+
+        print("------> Model Training Successful", end=seperator)
+        self.logger.info("Model Training Successful")
+
+    def evaluate_model(self):
+        """
+        EVALUATE MODEL
+        Returns - None
+        -------
+        """
+
+        self.logger.info("Start Evaluating Model")
+
+        self.y_pred = self.pipeline.predict(self.X_test)
+
+        print(f"R2 Score = {r2_score(self.y_test, self.y_pred)}")
+        print(f"Mean Absolute Error = {mean_absolute_error(self.y_test, self.y_pred)}")
+        print(f"Mean Squared Error = {mean_squared_error(self.y_test, self.y_pred)}")
+        print(f"Root Mean Squared Error = {root_mean_squared_error(self.y_test, self.y_pred)}")
+
+        print("------> Model Evaluation Successful", end=seperator)
+        self.logger.info("Model Evaluation Successful")
 
 def main():
     """
@@ -212,6 +257,7 @@ def main():
     regressor.handle_outliers()
     regressor.encoding()
     regressor.split_data()
+    regressor.train_model()
 
 if __name__ == "__main__":
     main()
