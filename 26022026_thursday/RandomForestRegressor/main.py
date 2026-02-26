@@ -42,7 +42,13 @@ class Regressor:
         self.random_state = 42
         self.test_size = 0.3
         self.pipeline = None
-        self.model = RandomForestRegressor(random_state = self.random_state)
+        self.model = RandomForestRegressor(
+            n_estimators = 23,
+            max_depth = 10,
+            verbose = 2,
+            min_samples_split = 5,
+            random_state = self.random_state
+        )
         self.y_pred = None
 
     def load_dataset(self):
@@ -220,7 +226,7 @@ class Regressor:
         )
         self.pipeline.fit(self.X_train, self.y_train)
 
-        print("------> Model Training Successful", end=seperator)
+        print("\n------> Model Training Successful", end=seperator)
         self.logger.info("Model Training Successful")
 
     def evaluate_model(self):
@@ -234,12 +240,12 @@ class Regressor:
 
         self.y_pred = self.pipeline.predict(self.X_test)
 
-        print(f"R2 Score = {r2_score(self.y_test, self.y_pred)}")
+        print(f"\nR2 Score = {r2_score(self.y_test, self.y_pred)}")
         print(f"Mean Absolute Error = {mean_absolute_error(self.y_test, self.y_pred)}")
         print(f"Mean Squared Error = {mean_squared_error(self.y_test, self.y_pred)}")
         print(f"Root Mean Squared Error = {root_mean_squared_error(self.y_test, self.y_pred)}")
 
-        print("------> Model Evaluation Successful", end=seperator)
+        print("\n------> Model Evaluation Successful", end=seperator)
         self.logger.info("Model Evaluation Successful")
 
 def main():
@@ -260,6 +266,7 @@ def main():
     regressor.encoding()
     regressor.split_data()
     regressor.train_model()
+    regressor.evaluate_model()
 
 if __name__ == "__main__":
     main()
