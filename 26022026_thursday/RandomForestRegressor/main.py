@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, root_mean_squared_error
+from sklearn.tree import plot_tree
 
 seperator = f"\n\n{'--' * 75}\n\n"
 
@@ -225,6 +226,15 @@ class Regressor:
             ]
         )
         self.pipeline.fit(self.X_train, self.y_train)
+
+        trained_model = self.pipeline.named_steps['model']
+        single_tree = trained_model.estimators_[0]
+        plt.figure(figsize = (20, 10))
+        plot_tree(
+            single_tree,
+            feature_names=self.pipeline.named_steps['preprocessor'].get_feature_names_out()
+        )
+        plt.show()
 
         print("\n------> Model Training Successful", end=seperator)
         self.logger.info("Model Training Successful")
