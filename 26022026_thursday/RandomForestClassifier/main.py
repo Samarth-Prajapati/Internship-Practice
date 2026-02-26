@@ -78,6 +78,36 @@ class Classification:
 
         print("-----> EDA Performed Successfully.")
 
+    def handle_outliers(self):
+        """
+        Handle outliers
+        Returns
+        -------
+        """
+
+        print("Outliers Info = \n")
+
+        cols = self.df.columns.tolist()
+        cols = cols[:len(cols) - 1]
+        for col in cols:
+            q1 = self.df[col].quantile(0.25)
+            q3 = self.df[col].quantile(0.75)
+            iqr = q3 - q1
+            lower = q1 - 1.5 * iqr
+            upper = q3 + 1.5 * iqr
+            outliers = self.df[(self.df[col] < lower) | (self.df[col] > upper)]
+            print(f"Feature ( {col} ) = {len(outliers)} outliers found.")
+
+            self.df[col] = self.df[col].clip(lower = lower, upper = upper)
+
+        for i in range(len(cols)):
+            plt.subplot(3, 3, i + 1)
+            sns.boxplot(y = self.df[cols[i]])
+            plt.title(cols[i])
+        plt.show()
+
+        print("\n-----> Outliers Handled Successfully.")
+
     def encoding(self):
         """
         Encoding the data.
@@ -145,6 +175,9 @@ def main():
 
     print("\n===================================================== EDA =====================================================\n")
     random_forest.eda()
+
+    print("\n=============================================== HANDLE OUTLIERS ===============================================\n")
+    random_forest.handle_outliers()
 
     print("\n=========================================== ENCODING TARGET FEATURE ===========================================\n")
     random_forest.encoding()
