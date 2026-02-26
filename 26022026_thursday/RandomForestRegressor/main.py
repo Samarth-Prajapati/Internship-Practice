@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import train_test_split
 
 seperator = f"\n\n{'--' * 75}\n\n"
 
@@ -29,6 +30,14 @@ class Regressor:
             drop = "first",
             handle_unknown = "ignore"
         )
+        self.X = None
+        self.y = None
+        self.X_train = None
+        self.y_train = None
+        self.X_test = None
+        self.y_test = None
+        self.random_state = 42
+        self.test_size = 0.3
 
     def load_dataset(self):
         """
@@ -70,7 +79,7 @@ class Regressor:
         print(f"Shape of Dataset = {self.df.shape}\n")
         print(f"Sum of Duplicates = {self.df.duplicated().sum()}\n")
 
-        print("------> Dataset Analysis Successfully", end=seperator)
+        print("------> Dataset Analysis Successfully", end = seperator)
         self.logger.info("Dataset Analysis Successfully")
 
     def preprocess(self):
@@ -86,7 +95,7 @@ class Regressor:
         print("Removed Unwanted Columns\n")
         print(f"Dataset = \n\n{self.df.head()}\n")
 
-        print("------> Dataset Preprocessed Successfully", end=seperator)
+        print("------> Dataset Preprocessed Successfully", end = seperator)
         self.logger.info("Dataset Preprocessed Successfully")
 
     def eda(self):
@@ -115,7 +124,7 @@ class Regressor:
             plt.title(cols[i])
         plt.show()
 
-        print("------> EDA Performed Successfully", end=seperator)
+        print("------> EDA Performed Successfully", end = seperator)
         self.logger.info("EDA Performed Successfully")
 
     def handle_outliers(self):
@@ -144,7 +153,7 @@ class Regressor:
         plt.title("duration")
         plt.show()
 
-        print("\n------> Outliers Handled Successfully", end=seperator)
+        print("\n------> Outliers Handled Successfully", end = seperator)
         self.logger.info("Outliers Handled Successfully")
 
     def encoding(self):
@@ -162,8 +171,29 @@ class Regressor:
             remainder="passthrough"
         )
 
-        print("\n------> Encoding on Categorical Data Successful", end=seperator)
+        print("------> Encoding on Categorical Data Successful", end = seperator)
         self.logger.info("Encoding on Categorical Data Successful")
+
+    def split_data(self):
+        """
+        SPLIT DATA
+        Returns
+        -------
+        """
+
+        self.logger.info("Start Splitting Data")
+
+        self.X = self.df.iloc[:, :-1]
+        self.y = self.df.iloc[:, -1]
+
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+            self.X, self.y,
+            test_size = self.test_size,
+            random_state=self.random_state
+        )
+
+        print("------> Data Splitting Successful", end = seperator)
+        self.logger.info("Data Splitting Successful")
 
 def main():
     """
@@ -181,6 +211,7 @@ def main():
     # regressor.eda()
     regressor.handle_outliers()
     regressor.encoding()
+    regressor.split_data()
 
 if __name__ == "__main__":
     main()
