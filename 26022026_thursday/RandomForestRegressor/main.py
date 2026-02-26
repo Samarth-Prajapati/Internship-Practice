@@ -2,6 +2,8 @@ import pandas as pd
 import logging
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
 
 seperator = f"\n\n{'--' * 75}\n\n"
 
@@ -22,6 +24,11 @@ class Regressor:
         self.path = path
         self.df = None
         self.logger = logging.getLogger("RANDOM_FOREST_REGRESSOR")
+        self.preprocessing = None
+        self.ohe = OneHotEncoder(
+            drop = "first",
+            handle_unknown = "ignore"
+        )
 
     def load_dataset(self):
         """
@@ -140,6 +147,24 @@ class Regressor:
         print("\n------> Outliers Handled Successfully", end=seperator)
         self.logger.info("Outliers Handled Successfully")
 
+    def encoding(self):
+        """
+        ENCODING CATEGORICAL DATA
+        Returns - None
+        -------
+        """
+
+        self.logger.info("Start Encoding Categorical Data")
+
+        categorical_cols = self.df.select_dtypes(include = ["str"]).columns
+        self.preprocessing = ColumnTransformer(
+            transformers = [("categorical", self.ohe, categorical_cols)],
+            remainder="passthrough"
+        )
+
+        print("\n------> Encoding on Categorical Data Successful", end=seperator)
+        self.logger.info("Encoding on Categorical Data Successful")
+
 def main():
     """
     ALL OPERATIONS OF REGRESSOR CLASS ARE COMPLETED HERE
@@ -155,6 +180,7 @@ def main():
     regressor.preprocess()
     # regressor.eda()
     regressor.handle_outliers()
+    regressor.encoding()
 
 if __name__ == "__main__":
     main()
