@@ -111,6 +111,35 @@ class Regressor:
         print("------> EDA Performed Successfully", end=seperator)
         self.logger.info("EDA Performed Successfully")
 
+    def handle_outliers(self):
+        """
+        HANDLE OUTLIERS
+        Returns - None
+        -------
+        """
+
+        self.logger.info("Start Handling Outliers")
+
+        print("Outliers Info = \n")
+
+        q1 = self.df["duration"].quantile(0.25)
+        q3 = self.df["duration"].quantile(0.75)
+        iqr = q3 - q1
+        lower = q1 - 1.5 * iqr
+        upper = q3 + 1.5 * iqr
+        outliers = self.df[(self.df["duration"] < lower) | (self.df["duration"] > upper)]
+        print(f"Feature ( duration ) = {len(outliers)} outliers found.")
+
+        self.df["duration"] = self.df["duration"].clip(lower = lower, upper = upper)
+
+        plt.figure(figsize = (10, 12))
+        sns.boxplot(y = self.df["duration"])
+        plt.title("duration")
+        plt.show()
+
+        print("\n------> Outliers Handled Successfully", end=seperator)
+        self.logger.info("Outliers Handled Successfully")
+
 def main():
     """
     ALL OPERATIONS OF REGRESSOR CLASS ARE COMPLETED HERE
@@ -124,7 +153,8 @@ def main():
     regressor.load_dataset()
     regressor.check_dataset()
     regressor.preprocess()
-    regressor.eda()
+    # regressor.eda()
+    regressor.handle_outliers()
 
 if __name__ == "__main__":
     main()
