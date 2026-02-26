@@ -1,5 +1,7 @@
 import pandas as pd
 import logging
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 seperator = f"\n\n{'--' * 75}\n\n"
 
@@ -72,13 +74,42 @@ class Regressor:
         """
 
         self.logger.info("Start Preprocessing Dataset")
-        
+
         self.df.drop(self.df.columns[0], axis = 1, inplace = True)
         print("Removed Unwanted Columns\n")
         print(f"Dataset = \n\n{self.df.head()}\n")
 
         print("------> Dataset Preprocessed Successfully", end=seperator)
         self.logger.info("Dataset Preprocessed Successfully")
+
+    def eda(self):
+        """
+        PERFORMING EDA ON DATASET
+        Returns - None
+        -------
+        """
+
+        self.logger.info("Start Performing EDA on Dataset")
+
+        corr = self.df.corr(numeric_only = True)
+        sns.heatmap(corr, annot = True)
+        plt.show()
+
+        cols = ["duration", "days_left", "price"]
+        for i in range(len(cols)):
+            plt.subplot(1, 3, i + 1)
+            sns.boxplot(y = self.df[cols[i]])
+            plt.title(cols[i])
+        plt.show()
+
+        for i in range(len(cols)):
+            plt.subplot(1, 3, i + 1)
+            sns.histplot(self.df[cols[i]], kde = True)
+            plt.title(cols[i])
+        plt.show()
+
+        print("------> EDA Performed Successfully", end=seperator)
+        self.logger.info("EDA Performed Successfully")
 
 def main():
     """
@@ -91,10 +122,9 @@ def main():
     regressor = Regressor(path)
 
     regressor.load_dataset()
-
     regressor.check_dataset()
-
     regressor.preprocess()
+    regressor.eda()
 
 if __name__ == "__main__":
     main()
