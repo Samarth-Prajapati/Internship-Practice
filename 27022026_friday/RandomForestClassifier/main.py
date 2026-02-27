@@ -34,12 +34,27 @@ class Classification:
         print(f"\nTotal Null Values in Dataset = \n{self.df.isnull().sum()}\n")
         print("Dataset Checked Successfully.", end = seperator)
 
+    def preprocess_data(self):
+        """
+        Preprocess data
+        Returns - None
+        -------
+        """
+
+        self.df.drop(columns = self.df.columns[0], inplace = True)
+        print("Removed Unwanted Features")
+        label_map = {"REAL": 1, "FAKE": 0}
+        self.df["label"] = self.df["label"].map(label_map)
+        print(f"Dataset = {self.df.head()}")
+
+
 def main():
     path = "news.csv"
     classifier = Classification(path)
 
     classifier.load_data()
     classifier.check_data()
+    classifier.preprocess_data()
 
 if __name__ == "__main__":
     main()
