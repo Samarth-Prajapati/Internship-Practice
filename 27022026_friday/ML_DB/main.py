@@ -7,13 +7,16 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-import warnings
 
+import warnings
 warnings.filterwarnings("ignore")
 
 seperator = f"\n{'--' * 65}\n"
 
 class DataBase:
+    """
+    Connecting DB and retrieving data in form of dataframe
+    """
 
     def __init__(self):
         try:
@@ -41,14 +44,17 @@ class DataBase:
             df = pd.read_sql(query, self.engine)
             print("Data converted to DataFrame", end = seperator)
 
-            return df
+            return df, self.engine
 
         except Exception as error:
             print(error)
 
 class Classification:
+    """
+    Random Forest Classifier Model
+    """
 
-    def __init__(self, df):
+    def __init__(self, df, engine):
         self.df = df
         self.le = LabelEncoder()
         self.X = None
@@ -66,6 +72,7 @@ class Classification:
             ccp_alpha = 0.01,
             random_state = self.random_state)
         self.y_pred = None
+        self.engine = engine
 
     def check_dataset(self):
         """
@@ -194,11 +201,28 @@ class Classification:
 
         print("\nModel Checked Successfully", end = seperator)
 
+    def save_predictions(self, table_name = "dataset"):
+        """
+        Saving the predictions.
+        Parameters
+        ----------
+        table_name - db table name
+
+        Returns - None
+        -------
+        """
+
+        self.y_pred = self.model.predict(self.X)
+        self.df["predicted_class"] = self.le.inverse_transform(self.y_pred)
+        self.df["label"] = self.le.inverse_transform(self.df["label"])
+        self.df.to_sql(table_name, self.engine, if_exists = "replace", index = False)
+        print("Predictions column added successfully", end = seperator)
+
 def main():
     loader = DataBase()
-    df = loader.load_table("dataset")
+    df, engine = loader.load_table("dataset")
 
-    classifier = Classification(df)
+    classifier = Classification(df, engine)
     classifier.check_dataset()
     classifier.eda()
     classifier.handle_outliers()
@@ -206,6 +230,7 @@ def main():
     classifier.split_data()
     classifier.train_model()
     classifier.check_model()
+    classifier.save_predictions()
 
 if __name__ == "__main__":
     main()
