@@ -91,6 +91,17 @@ class Classification:
 
         print("\nDataset Checked Successfully", end = seperator)
 
+    def encoding(self):
+        """
+        Encoding the data.
+        Returns - None
+        -------
+        """
+
+        self.df["label"] = self.le.fit_transform(self.df["label"])
+
+        print("Encoded Successfully", end = seperator)
+
     def eda(self):
         """
         Performing EDA
@@ -146,17 +157,6 @@ class Classification:
 
         print("\nOutliers Handled Successfully", end = seperator)
 
-    def encoding(self):
-        """
-        Encoding the data.
-        Returns - None
-        -------
-        """
-
-        self.df["label"] = self.le.fit_transform(self.df["label"])
-
-        print("Encoded Successfully", end = seperator)
-
     def split_data(self):
         """
         Splitting the data.
@@ -164,8 +164,8 @@ class Classification:
         -------
         """
 
-        self.X = self.df.iloc[:, :-1]
-        self.y = self.df.iloc[:, -1]
+        self.X = self.df[["N", "P", "K", "temperature", "humidity", "ph", "rainfall"]]
+        self.y = self.df["label"]
 
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
             self.X, self.y,
@@ -224,9 +224,9 @@ def main():
 
     classifier = Classification(df, engine)
     classifier.check_dataset()
+    classifier.encoding()
     classifier.eda()
     classifier.handle_outliers()
-    classifier.encoding()
     classifier.split_data()
     classifier.train_model()
     classifier.check_model()
