@@ -2,8 +2,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.model_selection import train_test_split
-from sklearn.svm import LinearSVC
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 seperator = f"\n\n{'--' * 70}\n\n"
@@ -26,8 +26,10 @@ class SupportVectorClassifier:
         self.random_state = 42
         self.scaler = StandardScaler()
         self.encoder = LabelEncoder()
-        self.model = LinearSVC()
+        self.model = SVC()
+        self.grid = None
         self.y_pred = None
+        self.params = []
 
     def load_data(self):
         """
@@ -152,7 +154,23 @@ class SupportVectorClassifier:
         """
 
         try:
-            self.model.fit(self.X_train, self.y_train)
+            self.params = [
+                {"C": [0.1, 1, 10, 100], "kernel": ["linear"]},
+                {"C": [0.1, 1, 10, 100], "kernel": ["rbf"]},
+                {"C": [0.1, 1, 10, 100], "kernel": ["rbf"], "gamma": [0.1, 0.5]},
+                {"C": [0.1, 1, 10, 100], "kernel": ["sigmoid"]},
+                {"C": [0.1, 1, 10, 100], "kernel": ["sigmoid"], "gamma": [0.1, 0.5]},
+            ]
+            self.grid = GridSearchCV(
+                self.model,
+                self.params,
+                scoring = "accuracy",
+                cv = 5,
+                verbose = 2
+            )
+
+            self.grid.fit(self.X_train, self.y_train)
+            print(f"\nBest Parameter = {self.grid.best_params_}\n")
 
             print("Model Trained Successfully.", end = seperator)
 
@@ -166,7 +184,7 @@ class SupportVectorClassifier:
         -------
         """
 
-        self.y_pred = self.model.predict(self.X_test)
+        self.y_pred = self.grid.predict(self.X_test)
         print(f"Accuracy Score = {accuracy_score(self.y_test, self.y_pred) * 100 : .2f} %")
         print(f"\nClassification Report = \n{classification_report(self.y_test, self.y_pred)}\n")
         print(f"Confusion Matrix = \n{confusion_matrix(self.y_test, self.y_pred)}\n")
