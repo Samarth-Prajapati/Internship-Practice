@@ -22,9 +22,25 @@ class SupportVectorClassifier:
         print(f"\nDataset = \n{self.df.head()}\n")
         print("Data Loaded Successfully.", end = seperator)
 
+    def check_data(self):
+        """
+        Check if data is correct for model training
+        Returns
+        -------
+        """
+
+        print("Dataset Info = ")
+        self.df.info()
+        print(f"\nDataset Description = \n{self.df.describe()}\n")
+        print(f"Total Duplicate Values = {self.df.duplicated().sum()}")
+        print(f"Dataset Shape = {self.df.shape}")
+        print(f"\nTotal Null Values = \n{self.df.isnull().sum()}\n")
+        print("Data Checked Successfully.", end = seperator)
+
 def main():
     svc = SupportVectorClassifier("user_data.csv")
     svc.load_data()
+    svc.check_data()
 
 if __name__ == "__main__":
     main()
