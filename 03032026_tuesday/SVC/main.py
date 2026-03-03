@@ -16,7 +16,6 @@ class SupportVectorClassifier:
     def __init__(self, path):
         self.path = path
         self.df = None
-        self.encoder = LabelEncoder()
         self.X = None
         self.y = None
         self.X_train = None
@@ -26,6 +25,7 @@ class SupportVectorClassifier:
         self.test_size = 0.3
         self.random_state = 42
         self.scaler = StandardScaler()
+        self.encoder = LabelEncoder()
         self.model = SVC()
         self.y_pred = None
 
@@ -66,7 +66,6 @@ class SupportVectorClassifier:
         """
 
         self.df.drop("user_id", axis = 1, inplace = True)
-        self.df["gender"] = self.encoder.fit_transform(self.df["gender"])
         print(f"Dataset = \n{self.df.head()}\n")
 
         print("Data Preprocessed Successfully.", end = seperator)
@@ -85,15 +84,15 @@ class SupportVectorClassifier:
         sns.pairplot(self.df, hue = "purchased")
         plt.show()
 
-        cols = ["gender", "age", "estimated_salary"]
+        cols = ["age", "estimated_salary", "purchased"]
         for i in range(len(cols)):
             plt.subplot(1, 3, i + 1)
             sns.boxplot(y = self.df[cols[i]])
             plt.title(cols[i])
         plt.show()
 
-        for i in range(len(cols)):
-            plt.subplot(1, 3, i + 1)
+        for i in range(len(cols) - 1):
+            plt.subplot(1, 2, i + 1)
             sns.histplot(self.df[cols[i]], kde = True)
             plt.title(cols[i])
         plt.show()
@@ -114,15 +113,20 @@ class SupportVectorClassifier:
 
         print("Data Splitting Successful.", end = seperator)
 
-    def scale_data(self):
+    def transform_data(self):
         """
         Scale data
         Returns - None
         -------
         """
 
+        self.X_train["gender"] = self.encoder.fit_transform(self.X_train["gender"])
+        self.X_test["gender"] = self.encoder.transform(self.X_test["gender"])
+
         self.X_train = self.scaler.fit_transform(self.X_train)
         self.X_test = self.scaler.transform(self.X_test)
+
+        print("Data Transformation Successful.", end = seperator)
 
     def train_model(self):
         """
@@ -162,7 +166,7 @@ def main():
     svc.preprocess_data()
     svc.eda()
     svc.split_data()
-    svc.scale_data()
+    svc.transform_data()
     svc.train_model()
     svc.evaluate_model()
 
