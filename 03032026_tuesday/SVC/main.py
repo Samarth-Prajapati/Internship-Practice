@@ -2,6 +2,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
 
 seperator = f"\n\n{'--' * 70}\n\n"
 
@@ -14,6 +16,15 @@ class SupportVectorClassifier:
         self.path = path
         self.df = None
         self.encoder = LabelEncoder()
+        self.X = None
+        self.y = None
+        self.X_train = None
+        self.X_test = None
+        self.y_train = None
+        self.y_test = None
+        self.test_size = 0.3
+        self.random_state = 42
+        self.model = SVC()
 
     def load_data(self):
         """
@@ -86,12 +97,39 @@ class SupportVectorClassifier:
 
         print("EDA performed Successfully.", end = seperator)
 
+    def split_data(self):
+        """
+        Split data
+        Returns - None
+        -------
+        """
+
+        self.X = self.df.iloc[:, :-1]
+        self.y = self.df.iloc[:, -1]
+
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size = self.test_size, random_state = self.random_state)
+
+        print("Data Splitting Successful.", end = seperator)
+
+    def train_model(self):
+        """
+        Train model
+        Returns - None
+        -------
+        """
+
+        self.model.fit(self.X_train, self.y_train)
+
+        print("Model Trained Successfully.", end = seperator)
+
 def main():
     svc = SupportVectorClassifier("user_data.csv")
     svc.load_data()
     svc.check_data()
     svc.preprocess_data()
     svc.eda()
+    svc.split_data()
+    svc.train_model()
 
 if __name__ == "__main__":
     main()
