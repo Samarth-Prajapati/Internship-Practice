@@ -3,7 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.svm import SVC
+from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 seperator = f"\n\n{'--' * 70}\n\n"
@@ -26,7 +26,7 @@ class SupportVectorClassifier:
         self.random_state = 42
         self.scaler = StandardScaler()
         self.encoder = LabelEncoder()
-        self.model = SVC()
+        self.model = LinearSVC()
         self.y_pred = None
 
     def load_data(self):
@@ -99,12 +99,6 @@ class SupportVectorClassifier:
             for i in range(len(cols)):
                 plt.subplot(1, 3, i + 1)
                 sns.boxplot(y = self.df[cols[i]])
-                plt.title(cols[i])
-            plt.show()
-
-            for i in range(len(cols) - 1):
-                plt.subplot(1, 2, i + 1)
-                sns.histplot(self.df[cols[i]], kde = True)
                 plt.title(cols[i])
             plt.show()
 
