@@ -1,9 +1,10 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 seperator = f"\n\n{'--' * 70}\n\n"
 
@@ -24,7 +25,9 @@ class SupportVectorClassifier:
         self.y_test = None
         self.test_size = 0.3
         self.random_state = 42
+        self.scaler = StandardScaler()
         self.model = SVC()
+        self.y_pred = None
 
     def load_data(self):
         """
@@ -111,6 +114,16 @@ class SupportVectorClassifier:
 
         print("Data Splitting Successful.", end = seperator)
 
+    def scale_data(self):
+        """
+        Scale data
+        Returns - None
+        -------
+        """
+
+        self.X_train = self.scaler.fit_transform(self.X_train)
+        self.X_test = self.scaler.transform(self.X_test)
+
     def train_model(self):
         """
         Train model
@@ -122,14 +135,36 @@ class SupportVectorClassifier:
 
         print("Model Trained Successfully.", end = seperator)
 
+    def evaluate_model(self):
+        """
+        Evaluate model
+        Returns - None
+        -------
+        """
+
+        self.y_pred = self.model.predict(self.X_test)
+        print(f"Accuracy Score = {accuracy_score(self.y_test, self.y_pred) * 100 : .2f} %")
+        print(f"\nClassification Report = \n{classification_report(self.y_test, self.y_pred)}\n")
+        print(f"Confusion Matrix = \n{confusion_matrix(self.y_test, self.y_pred)}\n")
+
+        print("Model Evaluation Successful.", end=seperator)
+
 def main():
+    """
+    Main function to run SVM Classifier model
+    Returns - None
+    -------
+    """
+
     svc = SupportVectorClassifier("user_data.csv")
     svc.load_data()
     svc.check_data()
     svc.preprocess_data()
     svc.eda()
     svc.split_data()
+    svc.scale_data()
     svc.train_model()
+    svc.evaluate_model()
 
 if __name__ == "__main__":
     main()
