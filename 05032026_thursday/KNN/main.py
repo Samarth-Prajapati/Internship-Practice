@@ -5,7 +5,7 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-import joblib
+import pickle
 
 seperator = f"\n\n{'--' * 70}\n\n"
 
@@ -217,7 +217,8 @@ class KNN:
 
         self.evaluate_model()
 
-        joblib.dump(self.grid, "knn.pkl")
+        with open("knn.pkl", "wb") as f:
+            pickle.dump(self.grid, f)
 
         print("Model Saved Successfully.", end = seperator)
 
