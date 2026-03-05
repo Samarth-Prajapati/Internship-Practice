@@ -30,7 +30,7 @@ class KNN:
         self.model = KNeighborsClassifier()
         self.grid = None
         self.y_pred = None
-        self.params = []
+        self.params = {}
 
     def load_data(self):
         """
@@ -129,7 +129,11 @@ class KNN:
             self.X = self.df.iloc[:, :-1]
             self.y = self.df.iloc[:, -1]
 
-            self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size = self.test_size, random_state = self.random_state)
+            self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+                self.X, self.y,
+                test_size = self.test_size,
+                random_state = self.random_state
+            )
 
             print("Data Splitting Successful.", end = seperator)
 
@@ -167,11 +171,11 @@ class KNN:
         self.transform_data()
 
         try:
-            self.params = [
-                {"n_neighbors": [3, 5, 7, 9, 11], "metric": ["euclidean"]},
-                {"n_neighbors": [3, 5, 7, 9, 11], "metric": ["manhattan"]},
-                {"n_neighbors": [3, 5, 7, 9, 11], "metric": ["minkowski"]},
-            ]
+            self.params = {
+                    "n_neighbors": [3, 5, 7, 9, 11],
+                    "metric": ["euclidean", "manhattan", "minkowski"],
+                    "weights": ["uniform", "distance"]
+            }
             self.grid = GridSearchCV(
                 self.model,
                 self.params,
@@ -202,7 +206,7 @@ class KNN:
         print(f"\nClassification Report = \n{classification_report(self.y_test, self.y_pred)}\n")
         print(f"Confusion Matrix = \n{confusion_matrix(self.y_test, self.y_pred)}\n")
 
-        print("Model Evaluation Successful.", end=seperator)
+        print("Model Evaluation Successful.", end = seperator)
 
     def save_model(self):
         """
