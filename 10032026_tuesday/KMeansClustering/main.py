@@ -1,6 +1,7 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import LabelEncoder
 
 seperator = f"\n\n{'--' * 75}\n\n"
 
@@ -9,6 +10,7 @@ class ClusteringAlgorithm:
 
     def __init__(self):
         self.df = None
+        self.encoder = LabelEncoder()
 
     def load_dataset(self):
         """
@@ -62,7 +64,7 @@ class ClusteringAlgorithm:
 
         try:
             self.df.drop("CustomerID", axis = 1, inplace = True)
-            print(f"After dropping unnecessary features dataset = \n{self.df.head()}\n")
+            print(f"After dropping unnecessary features, Dataset = \n{self.df.head()}\n")
 
             print("Dataset Preprocessing Successful.", end = seperator)
 
@@ -89,7 +91,7 @@ class ClusteringAlgorithm:
                 sns.boxplot(self.df[numeric_columns[i]])
             plt.show()
 
-            plt.figure(figsize = (10, 10))
+            plt.figure(figsize = (5, 5))
             plt.scatter(self.df.iloc[:, -2], self.df.iloc[:, -1])
             plt.xlabel(self.df.columns[-2])
             plt.ylabel(self.df.columns[-1])
@@ -100,11 +102,29 @@ class ClusteringAlgorithm:
         except Exception as error:
             print(error)
 
+    def feature_encoding(self):
+        """
+        Encoding categorical data to numerical data
+        Returns - None
+        -------
+        """
+
+        self.eda()
+
+        try:
+            self.df["Gender"] = self.encoder.fit_transform(self.df["Gender"])
+            print(f"After encoding categorical features, Dataset = \n{self.df.head()}\n")
+
+            print("Feature Scaled Successfully.", end = seperator)
+
+        except Exception as error:
+            print(error)
+
 def main():
     """Main Function"""
 
     cluster = ClusteringAlgorithm()
-    cluster.eda()
+    cluster.feature_encoding()
 
 if __name__ == "__main__":
     main()
