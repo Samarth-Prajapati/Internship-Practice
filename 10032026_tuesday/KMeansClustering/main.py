@@ -2,6 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.cluster import KMeans
 
 seperator = f"\n\n{'--' * 75}\n\n"
 
@@ -12,6 +13,8 @@ class ClusteringAlgorithm:
         self.df = None
         self.encoder = LabelEncoder()
         self.scaler = StandardScaler()
+        self.random_state = 42
+        self.model = None
 
     def load_dataset(self):
         """
@@ -140,11 +143,40 @@ class ClusteringAlgorithm:
         except Exception as error:
             print(error)
 
+    def elbow_method(self):
+        """
+        Elbow method for finding optimal number of clusters
+        Returns - None
+        -------
+        """
+
+        self.feature_scaling()
+
+        try:
+            within_cluster_sum_of_squares = []
+            for k in range(1, 11):
+                kmeans = KMeans(
+                    n_clusters = k,
+                    random_state = self.random_state
+                )
+                kmeans.fit(self.df)
+                within_cluster_sum_of_squares.append(kmeans.inertia_)
+
+            plt.plot(range(1, 11), within_cluster_sum_of_squares, marker = "o")
+            plt.xlabel("Number of Clusters")
+            plt.ylabel("Within Cluster Sum of Squares")
+            plt.show()
+            
+            print("Optimal K found Successfully.", end = seperator)
+
+        except Exception as error:
+            print(error)
+
 def main():
     """Main Function"""
 
     cluster = ClusteringAlgorithm()
-    cluster.feature_scaling()
+    cluster.elbow_method()
 
 if __name__ == "__main__":
     main()
