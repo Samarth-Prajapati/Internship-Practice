@@ -1,7 +1,7 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 seperator = f"\n\n{'--' * 75}\n\n"
 
@@ -11,6 +11,7 @@ class ClusteringAlgorithm:
     def __init__(self):
         self.df = None
         self.encoder = LabelEncoder()
+        self.scaler = StandardScaler()
 
     def load_dataset(self):
         """
@@ -115,6 +116,25 @@ class ClusteringAlgorithm:
             self.df["Gender"] = self.encoder.fit_transform(self.df["Gender"])
             print(f"After encoding categorical features, Dataset = \n{self.df.head()}\n")
 
+            print("Feature Encoded Successfully.", end = seperator)
+
+        except Exception as error:
+            print(error)
+
+    def feature_scaling(self):
+        """
+        Scale data to prevent overfitting
+        Returns - None
+        -------
+        """
+
+        self.feature_encoding()
+
+        try:
+            scaled_df = self.scaler.fit_transform(self.df)
+            self.df = pd.DataFrame(scaled_df, columns = self.df.columns)
+            print(f"After scaling features, Dataset = \n{self.df.head()}\n")
+
             print("Feature Scaled Successfully.", end = seperator)
 
         except Exception as error:
@@ -124,7 +144,7 @@ def main():
     """Main Function"""
 
     cluster = ClusteringAlgorithm()
-    cluster.feature_encoding()
+    cluster.feature_scaling()
 
 if __name__ == "__main__":
     main()
