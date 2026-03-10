@@ -166,8 +166,30 @@ class ClusteringAlgorithm:
             plt.xlabel("Number of Clusters")
             plt.ylabel("Within Cluster Sum of Squares")
             plt.show()
-            
+
             print("Optimal K found Successfully.", end = seperator)
+
+        except Exception as error:
+            print(error)
+
+    def train_model(self):
+        """
+        Training K Mean Clustering Model
+        Returns - None
+        -------
+        """
+
+        self.elbow_method()
+
+        try:
+            self.model = KMeans(
+                n_clusters = 6,
+                random_state = self.random_state
+            )
+            self.df["Clusters"] = self.model.fit_predict(self.df)
+            print(f"After model training and assigning cluster, Dataset = \n{self.df.head()}\n")
+
+            print("Model Trained Successfully.", end = seperator)
 
         except Exception as error:
             print(error)
@@ -176,7 +198,7 @@ def main():
     """Main Function"""
 
     cluster = ClusteringAlgorithm()
-    cluster.elbow_method()
+    cluster.train_model()
 
 if __name__ == "__main__":
     main()
