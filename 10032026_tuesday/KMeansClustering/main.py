@@ -1,4 +1,6 @@
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 seperator = f"\n\n{'--' * 75}\n\n"
 
@@ -67,11 +69,42 @@ class ClusteringAlgorithm:
         except Exception as error:
             print(error)
 
+    def eda(self):
+        """
+        Performing EDA to check whether dataset contains any outliers
+        Returns - None
+        -------
+        """
+
+        self.preprocess_dataset()
+
+        try:
+            corr = self.df.corr(numeric_only = True)
+            sns.heatmap(corr, annot = True)
+            plt.show()
+
+            numeric_columns = self.df.select_dtypes(include = "int64").columns
+            for i in range(len(numeric_columns)):
+                plt.subplot(1, 3, i + 1)
+                sns.boxplot(self.df[numeric_columns[i]])
+            plt.show()
+
+            plt.figure(figsize = (10, 10))
+            plt.scatter(self.df.iloc[:, -2], self.df.iloc[:, -1])
+            plt.xlabel(self.df.columns[-2])
+            plt.ylabel(self.df.columns[-1])
+            plt.show()
+
+            print("EDA Performed Successfully.", end = seperator)
+
+        except Exception as error:
+            print(error)
+
 def main():
     """Main Function"""
 
     cluster = ClusteringAlgorithm()
-    cluster.preprocess_dataset()
+    cluster.eda()
 
 if __name__ == "__main__":
     main()
