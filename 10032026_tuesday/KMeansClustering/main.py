@@ -49,11 +49,29 @@ class ClusteringAlgorithm:
         except Exception as error:
             print(error)
 
+    def preprocess_dataset(self):
+        """
+        Preprocessing dataset by dropping unnecessary columns
+        Returns - None
+        -------
+        """
+
+        self.analyse_dataset()
+
+        try:
+            self.df.drop("CustomerID", axis = 1, inplace = True)
+            print(f"After dropping unnecessary features dataset = \n{self.df.head()}\n")
+
+            print("Dataset Preprocessing Successful.", end = seperator)
+
+        except Exception as error:
+            print(error)
+
 def main():
     """Main Function"""
 
     cluster = ClusteringAlgorithm()
-    cluster.analyse_dataset()
+    cluster.preprocess_dataset()
 
 if __name__ == "__main__":
     main()
