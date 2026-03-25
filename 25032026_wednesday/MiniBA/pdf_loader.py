@@ -1,4 +1,5 @@
 from langchain_community.document_loaders import PyPDFLoader
+import os
 
 def load_pdf(file_path):
     """
@@ -24,4 +25,4 @@ def load_pdf(file_path):
     except FileNotFoundError:
         return "PDF not found"
     except Exception as error:
-        return error
+        return "Error in loading PDF", error
