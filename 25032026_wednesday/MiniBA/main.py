@@ -14,7 +14,7 @@ def main():
     tools = [requirements, user_story, tasks]
 
     prompt = prompt_loader("prompt/agent_workflow.md")
-    data = load_pdf("data.pdf")
+    data = load_pdf("25032026_wednesday/MiniBA/data.pdf")
 
     user_query = f"""
     1. Gather Functional and Non Functional Requirements
