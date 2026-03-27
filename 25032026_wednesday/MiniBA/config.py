@@ -6,11 +6,11 @@ load_dotenv()
 
 try:
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-    GROQ_MODEL_1 = os.getenv("GROQ_MODEL_1")
+    GROQ_MODEL_2 = os.getenv("GROQ_MODEL_2")
 
     llm = ChatGroq(
         api_key = GROQ_API_KEY,
-        model = GROQ_MODEL_1,
+        model = GROQ_MODEL_2,
         temperature = 0.3
     )
 
